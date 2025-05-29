@@ -1,39 +1,23 @@
-import React from "react";
-
-function QuestionItem({ question, onDelete, onUpdate }) {
+function QuestionItem({ question, onUpdateCorrectIndex, onDeleteQuestion }) {
   const { id, prompt, answers, correctIndex } = question;
-  function handleDelete() {
-    onDelete(question.id);
-  }
-  
-  function handleChangeCorrectAnswer(e) {
-    const correctIndex = parseInt(e.target.value, 10);
-    fetch(`http://localhost:4000/questions/${question.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ correctIndex }),
-    })
-      .then((r) => r.json())
-      .then(onUpdate);
+
+  function handleChange(e) {
+    onUpdateCorrectIndex(id, parseInt(e.target.value, 10));
   }
 
-  const options = answers.map((answer, index) => (
-    <option key={index} value={index}>
-      {answer}
-    </option>
-  ));
+  function handleDelete() {
+    onDeleteQuestion(id);
+  }
 
   return (
     <li>
       <h4>Question {id}</h4>
-      <h5>Prompt: {question.prompt}</h5>
+      <h5>Prompt: {prompt}</h5>
       <label>
         Correct Answer:
-        <select value={question.correctIndex} onChange={handleChangeCorrectAnswer}>
-          {question.answers.map((_, idx) => (
-            <option key={idx} value={idx}>
-              {idx + 1}
-            </option>
+        <select value={correctIndex} onChange={handleChange}>
+          {answers.map((ans, index) => (
+            <option key={index} value={index}>{ans}</option>
           ))}
         </select>
       </label>
